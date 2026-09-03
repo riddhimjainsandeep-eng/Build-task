@@ -1,0 +1,13 @@
+{
+  "taskFolder": "agent-runs/active",
+  "doneFolder": "agent-runs/done",
+  "docsRoot": "docs/maps",
+  "rulesFile": "CLAUDE.md",
+
+  "buildCommand": null,
+  "testCommand": null,
+
+  "liveFiles": [],
+
+  "push": true
+}
