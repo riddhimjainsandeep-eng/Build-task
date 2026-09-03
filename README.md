@@ -8,6 +8,10 @@ learn from what happened in another.
 **New here? Read [SETUP.md](SETUP.md).** It is written to be followed without
 knowing any code.
 
+**Want to see how it works rather than read about it?**
+**[The flowcharts](docs/flowcharts/)** — six diagrams, each with the reasoning
+behind it and the alternative that was rejected.
+
 ## Why it exists
 
 The person using this is not a developer and cannot verify code by reading it.

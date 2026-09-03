@@ -15,6 +15,13 @@ this file. Read it when editing the procedure or when a rule looks arbitrary —
 not on every run. This file is charged on every turn of every phase, so anything
 explanatory belongs there, not here.
 
+**Read `user.md` at the repo root once at the start of a run and follow it.** It
+says who everything user-facing is written for and how he needs it — plain
+English, the reasoning as well as the conclusion, jargon explained where it
+appears, and a diagram wherever you are explaining how something works. Phase 4
+is where it matters most, but it binds every phase that writes something he
+reads.
+
 **If this project has no `agent-runs/` folder and no `.build-task-setup` marker,
 it has never been set up. Run the `build-setup` skill first, then come back.**
 
@@ -310,7 +317,15 @@ call. Nothing earlier is ever shortened, `RESUME.md` included.
 
 ### 04-REPORT.md — for the user
 
-Plain English. No code, no file paths, no jargon.
+Plain English, per `user.md`. No code, no file paths. Where a technical word is
+unavoidable, explain it immediately below that paragraph, never in a glossary at
+the end. Give the reasoning, not just the conclusion — what the alternative was
+and why you did not take it.
+
+**If the report explains how something works, draw it.** A small Mermaid diagram
+in the report itself, and — when it is worth keeping — a numbered file in
+`<docsRoot>/flowcharts/`. He reads a diagram far faster than the paragraph it
+replaces.
 
 1. What was asked — one line
 2. What was done
