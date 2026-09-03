@@ -58,31 +58,76 @@ Keep both values on your clipboard or somewhere handy — Part 2 asks you for th
 
 ## Part 2 — Install the plugin
 
-In Claude Code, run these two lines:
+There are two routes and they end in exactly the same place. Pick whichever suits
+you.
+
+### Route A — inside Claude Code (you get asked for the values)
 
 ```
 /plugin marketplace add riddhimjainsandeep-eng/build-task
 /plugin install build-task@riddhim-tools
 ```
 
-**A settings box will come up asking for the two values from Part 1** — the
-project URL and the anon key. Paste them in. The key field is masked as you type
-and is stored in your system's secure storage, not in a plain settings file.
+Then open `/plugin`, find **build-task**, and choose configure. **A settings box
+asks for the two values from Part 1.** Paste them in. The key field is masked as
+you type.
 
-That is the whole setup. You do not have to create or edit any file by hand.
+Use this route if you would rather be asked than type the key into a command.
 
-You can leave both fields blank if you want to try the procedure first — it works
-fine without a shared history, it simply does not remember anything across
-projects. Re-open the plugin's settings later to fill them in.
+### Route B — from PowerShell or any terminal (you supply the values)
+
+```powershell
+claude plugin marketplace add riddhimjainsandeep-eng/build-task
+claude plugin install build-task@riddhim-tools --config supabase_url=https://abcdefgh.supabase.co --config supabase_key=paste-the-anon-key-here
+```
+
+Be aware this route puts the key into your shell history, since you typed it as
+part of a command. On a personal machine that is usually fine; if it bothers you,
+use Route A.
+
+### What you will actually see
+
+Not much, and that is normal. No progress bars, no unzipping animation, no
+questions. Roughly this:
+
+```
+Adding marketplace…Cloning via HTTPS: https://github.com/...
+√ Successfully added marketplace: riddhim-tools
+Installing plugin "build-task@riddhim-tools"...√ Successfully installed (scope: user)
+```
+
+**It does not ask whether to install globally or into one folder.** It installs
+for your whole user account by default, which is what you want — available in
+every project. Only pass `--scope project` if you ever deliberately want it in
+one folder.
+
+### After that, nothing is left to do by hand
+
+The two values are stored by Claude Code itself: the URL in your settings, and
+the key in your system's secure credential storage rather than a plain text file.
+The first time a session starts, the plugin writes them to
+`~/.claude/build-task/env` — locked so only your user account can read it — which
+is where the history scripts look.
+
+You can leave both fields blank if you want to try the procedure first. It works
+fine without a shared history; it simply does not remember anything across
+projects. Fill them in later through `/plugin`.
 
 **Do this on each machine you use.** The iPad and your laptop are separate
-installs and each asks once, because a setting saved on one is not visible to the
-other.
+installs, because a setting saved on one is not visible to the other.
 
-### If the settings box does not appear
+### Checking it worked
 
-Some versions may not prompt. In that case create the file yourself — this is
-exactly what the box would have written:
+```
+claude plugin list
+```
+
+You want to see `Status: √ enabled`. If it says **failed to load**, the plugin
+installed but is doing nothing — read the error line, which names the cause.
+
+### If you ever need to write the file yourself
+
+This is what the steps above produce, so you can create it by hand instead:
 
 `~/.claude/build-task/env`
 
@@ -90,8 +135,6 @@ exactly what the box would have written:
 BUILD_TASK_SUPABASE_URL=https://abcdefgh.supabase.co
 BUILD_TASK_SUPABASE_KEY=paste-the-anon-key-here
 ```
-
-Both routes end in the same place, and the procedure reads whichever it finds.
 
 ---
 
