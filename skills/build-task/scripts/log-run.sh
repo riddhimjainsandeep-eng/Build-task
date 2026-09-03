@@ -53,16 +53,22 @@ command -v jq   >/dev/null 2>&1 || { warn "jq not found, skipping history write"
 command -v curl >/dev/null 2>&1 || { warn "curl not found, skipping history write"; exit 0; }
 
 # --- credentials ------------------------------------------------------------
+# Three sources, in order: the environment, the plugin's install-time settings
+# (when this happens to run somewhere they are exported), then the file the
+# session-start hook writes.
 ENV_FILE="${HOME}/.claude/build-task/env"
-if [ -z "${BUILD_TASK_SUPABASE_URL:-}" ] && [ -f "$ENV_FILE" ]; then
+URL="${BUILD_TASK_SUPABASE_URL:-${CLAUDE_PLUGIN_OPTION_SUPABASE_URL:-}}"
+KEY="${BUILD_TASK_SUPABASE_KEY:-${CLAUDE_PLUGIN_OPTION_SUPABASE_KEY:-}}"
+
+if { [ -z "$URL" ] || [ -z "$KEY" ]; } && [ -f "$ENV_FILE" ]; then
   # shellcheck disable=SC1090
   set -a; . "$ENV_FILE"; set +a
+  URL="${URL:-${BUILD_TASK_SUPABASE_URL:-}}"
+  KEY="${KEY:-${BUILD_TASK_SUPABASE_KEY:-}}"
 fi
 
-URL="${BUILD_TASK_SUPABASE_URL:-}"
-KEY="${BUILD_TASK_SUPABASE_KEY:-}"
 if [ -z "$URL" ] || [ -z "$KEY" ]; then
-  warn "shared history not configured (no BUILD_TASK_SUPABASE_URL/KEY, no $ENV_FILE) — skipping"
+  warn "shared history not configured — skipping (see the plugin's SETUP.md)"
   exit 0
 fi
 URL="${URL%/}"

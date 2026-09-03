@@ -25,9 +25,9 @@ That is the whole design. Everything else follows from it.
 
 | Command | What it does |
 |---|---|
-| `/build-setup` | First run in a project. Creates the folders and documents, checks `CLAUDE.md` against the real code, writes the maps, asks you what it could not work out. Once per project. |
-| `/build <task>` | Runs a task through all six phases. |
-| `/build-history` | Looks at what has happened across all your projects. |
+| `/build-task:build-setup` | First run in a project. Creates the folders and documents, checks `CLAUDE.md` against the real code, writes the maps, asks you what it could not work out. Once per project. |
+| `/build-task:build <task>` | Runs a task through all six phases. |
+| `/build-task:build-history` | Looks at what has happened across all your projects. |
 
 ## The six phases
 
@@ -62,8 +62,8 @@ is a hope; a missing policy is a wall.
 skills/
   build-task/       the six-phase procedure — SKILL.md, reference.md, scripts/
   build-setup/      first-run project setup, and the file templates it copies
-commands/           /build, /build-setup, /build-history
-hooks/              context-size warning
+commands/           the /build-task:build and /build-task:build-history entry points
+hooks/              context-size warning, and saving your setup answers
 db/schema.sql       the shared history table — run once, in Supabase
 ```
 

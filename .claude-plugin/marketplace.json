@@ -1,5 +1,6 @@
 {
   "name": "riddhim-tools",
+  "description": "Riddhim's personal Claude Code tooling.",
   "owner": {
     "name": "Riddhim Jain",
     "url": "https://github.com/riddhimjainsandeep-eng"
@@ -9,7 +10,7 @@
       "name": "build-task",
       "source": "./",
       "description": "A six-phase procedure for making changes to any codebase, with a first-run project setup and a shared cross-project history.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": {
         "name": "Riddhim Jain"
       }

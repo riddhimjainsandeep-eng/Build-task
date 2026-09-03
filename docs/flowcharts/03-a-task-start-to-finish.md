@@ -2,7 +2,7 @@
 
 ```mermaid
 flowchart TD
-    A["You run /build task-name"] --> P0["Phase 0 — Explore<br/>read the code and write down<br/>what is believed, before changing anything"]
+    A["You run build<br/>with a task name"] --> P0["Phase 0 — Explore<br/>read the code and write down<br/>what is believed, before changing anything"]
 
     P0 --> V{"Can this be done<br/>as asked?"}
     V -->|"Blocked, or needs your decision"| STOP["Stop and ask you.<br/>Nothing has been changed."]

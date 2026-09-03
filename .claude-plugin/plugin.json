@@ -1,7 +1,7 @@
 {
   "name": "build-task",
   "displayName": "Build Task",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A six-phase procedure for making changes to any codebase, with a first-run project setup and a shared cross-project history.",
   "author": {
     "name": "Riddhim Jain",
@@ -9,5 +9,20 @@
   },
   "repository": "https://github.com/riddhimjainsandeep-eng/build-task",
   "keywords": ["build", "procedure", "review", "documentation", "workflow"],
-  "hooks": "./hooks/hooks.json"
+  "hooks": "./hooks/hooks.json",
+  "userConfig": {
+    "supabase_url": {
+      "type": "string",
+      "title": "Shared history — project URL",
+      "description": "From your Supabase project: Project Settings -> API -> Project URL. Looks like https://abcdefgh.supabase.co. Leave blank to run without a shared history.",
+      "required": false
+    },
+    "supabase_key": {
+      "type": "string",
+      "title": "Shared history — anon key",
+      "description": "From the same page: the anon / public key (NOT the service role key). Leave blank to run without a shared history.",
+      "sensitive": true,
+      "required": false
+    }
+  }
 }

@@ -46,19 +46,7 @@ session could quietly tidy up.
    service role / secret key** — that one can do anything, and nothing here needs
    it.
 
-### 4. Save them where Claude Code can find them
-
-**On your own machine**, create a file at `~/.claude/build-task/env` containing
-exactly two lines:
-
-```
-BUILD_TASK_SUPABASE_URL=https://abcdefgh.supabase.co
-BUILD_TASK_SUPABASE_KEY=paste-the-anon-key-here
-```
-
-**For remote sessions (the iPad)**, add those same two as environment variables in
-your Claude Code environment settings, since a file on your laptop is not visible
-from there. Both halves have to be done for the history to work from both places.
+Keep both values on your clipboard or somewhere handy — Part 2 asks you for them.
 
 > **What this key can do, plainly.** Anyone holding it can add rows to this one
 > table and read them back. It cannot touch anything else, and it cannot edit or
@@ -70,15 +58,40 @@ from there. Both halves have to be done for the history to work from both places
 
 ## Part 2 — Install the plugin
 
-In Claude Code, run:
+In Claude Code, run these two lines:
 
 ```
 /plugin marketplace add riddhimjainsandeep-eng/build-task
 /plugin install build-task@riddhim-tools
 ```
 
-That is it. It is now available in every project, and updates to it reach every
-project the same way.
+**A settings box will come up asking for the two values from Part 1** — the
+project URL and the anon key. Paste them in. The key field is masked as you type
+and is stored in your system's secure storage, not in a plain settings file.
+
+That is the whole setup. You do not have to create or edit any file by hand.
+
+You can leave both fields blank if you want to try the procedure first — it works
+fine without a shared history, it simply does not remember anything across
+projects. Re-open the plugin's settings later to fill them in.
+
+**Do this on each machine you use.** The iPad and your laptop are separate
+installs and each asks once, because a setting saved on one is not visible to the
+other.
+
+### If the settings box does not appear
+
+Some versions may not prompt. In that case create the file yourself — this is
+exactly what the box would have written:
+
+`~/.claude/build-task/env`
+
+```
+BUILD_TASK_SUPABASE_URL=https://abcdefgh.supabase.co
+BUILD_TASK_SUPABASE_KEY=paste-the-anon-key-here
+```
+
+Both routes end in the same place, and the procedure reads whichever it finds.
 
 ---
 
@@ -87,7 +100,7 @@ project the same way.
 **The first time, in each project**, run:
 
 ```
-/build-setup
+/build-task:build-setup
 ```
 
 This creates the standard folders, reads your `CLAUDE.md` against the actual code
@@ -98,15 +111,15 @@ itself. It only ever runs once per project.
 **From then on**, every task is:
 
 ```
-/build <task-name>
+/build-task:build <task-name>
 ```
 
 And to look at what has happened across all your projects:
 
 ```
-/build-history
-/build-history summary
-/build-history sync
+/build-task:build-history
+/build-task:build-history summary
+/build-task:build-history sync
 ```
 
 ---
@@ -128,10 +141,10 @@ not need copying into six repositories by hand.
 
 ## If something does not work
 
-- **`/build-history` says the history is not set up** — the two values in Part 1
+- **`/build-task:build-history` says the history is not set up** — the two values in Part 1
   step 4 are missing or misspelled in whichever environment you are in. Remember
   that the laptop and the iPad need them set separately.
 - **A run finishes but nothing appears in the history** — that is by design: the
   logging step never blocks a run. The report will contain one line saying it
   could not write, and why.
-- **`/build` says the project has never been set up** — run `/build-setup` first.
+- **`/build-task:build` says the project has never been set up** — run `/build-task:build-setup` first.

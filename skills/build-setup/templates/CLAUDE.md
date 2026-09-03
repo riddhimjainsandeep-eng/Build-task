@@ -70,7 +70,7 @@ silently. Each one with the evidence for why it is here.>
 ## Build procedure
 
 Any task that modifies this codebase runs through the **build-task** skill — all
-six phases, in order, no exceptions. Invoke with `/build <task-name>`.
+six phases, in order, no exceptions. Invoke with `/build-task:build <task-name>`.
 
 ## Working conventions
 

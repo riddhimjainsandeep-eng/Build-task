@@ -4,7 +4,7 @@ This is the flowchart you drew, built as it stands.
 
 ```mermaid
 flowchart TD
-    S["You run /build-setup"] --> Q{"Does this project<br/>already have real code?"}
+    S["You run<br/>build-setup"] --> Q{"Does this project<br/>already have real code?"}
 
     Q -->|"No — brand new"| N1["Create the folders<br/>and the blank documents"]
     Q -->|"Yes — already exists"| O1["Create the folders<br/>and the blank documents"]

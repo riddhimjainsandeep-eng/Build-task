@@ -10,7 +10,7 @@ Markdown viewers, and on an iPad.
 |---|---|---|
 | 01 | [The whole system](01-the-whole-system.md) | What are the pieces, and what is shared between projects? |
 | 02 | [First time in a project](02-first-time-in-a-project.md) | What happens when this lands in a project — new or existing? |
-| 03 | [A task, start to finish](03-a-task-start-to-finish.md) | What actually happens when I run `/build`? |
+| 03 | [A task, start to finish](03-a-task-start-to-finish.md) | What actually happens when I run a task? |
 | 04 | [How claims get checked](04-how-claims-get-checked.md) | How does it know the notes are still true? |
 | 05 | [The shared notebook](05-the-shared-notebook.md) | What gets remembered across projects, and what can never happen to it? |
 | 06 | [Two kinds of update](06-two-kinds-of-update.md) | Does this change belong to the procedure, or to one project? |

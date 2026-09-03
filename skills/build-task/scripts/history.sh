@@ -33,12 +33,16 @@ for tool in jq curl; do
 done
 
 ENV_FILE="${HOME}/.claude/build-task/env"
-if [ -z "${BUILD_TASK_SUPABASE_URL:-}" ] && [ -f "$ENV_FILE" ]; then
+URL="${BUILD_TASK_SUPABASE_URL:-${CLAUDE_PLUGIN_OPTION_SUPABASE_URL:-}}"
+KEY="${BUILD_TASK_SUPABASE_KEY:-${CLAUDE_PLUGIN_OPTION_SUPABASE_KEY:-}}"
+
+if { [ -z "$URL" ] || [ -z "$KEY" ]; } && [ -f "$ENV_FILE" ]; then
   # shellcheck disable=SC1090
   set -a; . "$ENV_FILE"; set +a
+  URL="${URL:-${BUILD_TASK_SUPABASE_URL:-}}"
+  KEY="${KEY:-${BUILD_TASK_SUPABASE_KEY:-}}"
 fi
 
-URL="${BUILD_TASK_SUPABASE_URL:-}"; KEY="${BUILD_TASK_SUPABASE_KEY:-}"
 if [ -z "$URL" ] || [ -z "$KEY" ]; then
   echo "Shared history is not set up yet — see the plugin's SETUP.md." >&2
   exit 1
