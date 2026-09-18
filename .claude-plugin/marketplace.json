@@ -10,7 +10,7 @@
       "name": "build-task",
       "source": "./",
       "description": "A six-phase procedure for making changes to any codebase, with a first-run project setup and a shared cross-project history.",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "author": {
         "name": "Riddhim Jain"
       }

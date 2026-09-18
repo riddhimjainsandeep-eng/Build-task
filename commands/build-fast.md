@@ -1,24 +1,9 @@
 ---
-description: Execute a prompt file using the full six-phase build procedure
-argument-hint: [task-name | --update]
+description: Execute a prompt file using the faster variant of the six-phase build procedure (experimental)
+argument-hint: [task-name]
 ---
 
-**If `$1` is `--update`, do not run a task.** Publish or fetch changes to this
-plugin instead — it is loaded straight from its git checkout, so every project
-picks the result up at its next session start:
-
-1. Run `bash "${CLAUDE_PLUGIN_ROOT}/scripts/update.sh" --check` (if the variable
-   is empty, the plugin lives at `~/.claude/skills/build-task`). Tell the user in
-   plain English what it found.
-2. If it would publish local changes, read `git diff` in the plugin folder, write
-   a one-line summary of what changed, and run
-   `update.sh --message "<summary>"`. If it would pull, run
-   `update.sh --message pull`. If it reports FAILED, stop and explain; change
-   nothing by hand.
-3. Report the version now live, and that each project picks it up in a new
-   session. **Never touch a project's own local copy of the skill.**
-
-Otherwise, execute the task `$1` using the **build-task** skill.
+Execute the task `$1` using the **build-task-fast** skill (the experimental faster variant; `/build` still runs the regular one).
 
 **First, check this project has been set up.** If there is no `agent-runs/`
 folder and no `.build-task-setup` marker, stop and run the **build-setup** skill
@@ -46,7 +31,7 @@ improvising a folder structure.
    today's date, move the prompt file in as `00-PROMPT.md`, and work there.
    If nothing matches `$1`, list what is in `upcoming/` and `active/` and stop.
 
-3. Read the build-task skill and follow all six phases in order. Do not skip a
+3. Read the build-task-fast skill and follow all six phases in order. Do not skip a
    phase and do not reorder them. The prompt file is the goal; the skill is the
    procedure.
 
@@ -54,6 +39,8 @@ improvising a folder structure.
    `needs a decision`, or when a better alternative should be proposed. A
    `feasible` verdict continues straight through.
 
-5. Print `04-REPORT.md` in chat, then run Phase 5 in full — documents, the rules
-   file and its inventory, move to `done/`, archive, **log the run to the shared
-   history**, push, and delete `RESUME.md` last.
+5. Phase 3 runs in the background alongside Phase 2, per the skill. Then read
+   its `phases/report-and-close.md`, print the user part of `04-REPORT.md` in
+   chat, and run Phase 5 in full — documents, the rules file and its inventory,
+   then `scripts/close-out.sh` for move, archive, the shared history, push, and
+   deleting `RESUME.md` last.

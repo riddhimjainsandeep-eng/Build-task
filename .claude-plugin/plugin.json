@@ -1,7 +1,7 @@
 {
   "name": "build-task",
   "displayName": "Build Task",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A six-phase procedure for making changes to any codebase, with a first-run project setup and a shared cross-project history.",
   "author": {
     "name": "Riddhim Jain",

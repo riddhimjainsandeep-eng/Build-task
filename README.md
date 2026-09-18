@@ -28,6 +28,10 @@ That is the whole design. Everything else follows from it.
 | `/build-task:build-setup` | First run in a project. Creates the folders and documents, checks `CLAUDE.md` against the real code, writes the maps, asks you what it could not work out. Once per project. |
 | `/build-task:build <task>` | Runs a task through all six phases. |
 | `/build-task:build-history` | Looks at what has happened across all your projects. |
+| `/build-task:build --update` | Publishes your edits to this plugin (version bump, commit, push), or pulls the latest on another machine. Never touches a project's own copy of the skill. |
+| `/build-task:build-v2 <task>` | **Experimental v2** — same six phases, risk-scored and quality-first. See `skills/build-task-v2/reference.md` for every difference. |
+| `/build-task:build-v2 settings` | Choose what v2 runs produce (zip, handoff, cost section, push, maps, history). Add `project` for this project only. |
+| `/build-task:build-fast <task>` | Experimental — v1's procedure with waste removed (Phase 2 and 3 together, one-call close-out). |
 
 ## The six phases
 
