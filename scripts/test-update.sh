@@ -41,4 +41,17 @@ cd "$T/b" && echo "local" >> SKILL.md
 out=$(bash scripts/update.sh --message "local")
 check "diverged: refuses, changes nothing" "grep -q FAILED <<<\"\$out\" && grep -q local SKILL.md && [ \"\$(ver . plugin.json)\" = 1.1.2 ]"
 
+# Marketplace install: a plain copy, sitting inside someone's dotfiles repo.
+# Must call `claude plugin …` and never commit to the outer repo.
+git init -q "$T/dotfiles" && M="$T/dotfiles/plugin" && mkdir -p "$M/.claude-plugin" "$M/scripts" "$T/bin"
+printf '{\n  "name": "build-task",\n  "version": "1.1.1"\n}\n' > "$M/.claude-plugin/plugin.json"
+printf '{\n  "name": "riddhim-tools",\n  "plugins": [{ "name": "build-task" }]\n}\n' > "$M/.claude-plugin/marketplace.json"
+cp "$HERE/update.sh" "$M/scripts/"
+printf '#!/bin/sh\necho "$*" >> "%s"\n' "$T/claude.log" > "$T/bin/claude" && chmod +x "$T/bin/claude"
+out=$(PATH="$T/bin:$PATH" bash "$M/scripts/update.sh" --check)
+check "marketplace check: calls nothing" "grep -q 'would: fetch' <<<\"\$out\" && [ ! -e $T/claude.log ]"
+out=$(PATH="$T/bin:$PATH" bash "$M/scripts/update.sh" --message pull)
+check "marketplace: fetches via claude" "grep -q 'restart Claude Code' <<<\"\$out\" && grep -qx 'plugin marketplace update riddhim-tools' $T/claude.log && grep -qx 'plugin update build-task@riddhim-tools' $T/claude.log"
+check "marketplace: outer repo untouched" "! git -C $T/dotfiles rev-parse -q --verify HEAD >/dev/null"
+
 [ "$fails" = 0 ] && echo "ALL PASS" || { echo "$fails FAILED"; exit 1; }

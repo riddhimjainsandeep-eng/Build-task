@@ -9,6 +9,9 @@
 #   GitHub has newer commits  → fast-forward pull (e.g. on another machine)
 #   both                      → stop; a human merges
 #
+# Installed from the marketplace instead (a copy, no .git)? It asks Claude Code
+# to fetch the latest version from GitHub; nothing is committed or pushed.
+#
 # It never touches a project's own local copy of the skill.
 #
 # Usage:
@@ -23,14 +26,27 @@ MODE="" MSG=""
 case "${1:-}" in
   --check)   MODE=check ;;
   --message) MODE=publish; MSG="${2:-}"; [ -n "$MSG" ] || { echo "update.sh: --message needs a summary" >&2; exit 2; } ;;
-  *) sed -n '2,17p' "$0"; exit 2 ;;
+  *) sed -n '2,20p' "$0"; exit 2 ;;
 esac
 
-ROOT=$(git -C "$(dirname "$0")" rev-parse --show-toplevel) || { echo "FAILED: plugin folder is not a git checkout"; exit 1; }
+# The plugin folder itself must be the checkout — a repo further up (a dotfiles
+# ~/.claude, say) must never be committed or pushed by this script.
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
 cd "$ROOT"
 PLUGIN_JSON=.claude-plugin/plugin.json
 MARKET_JSON=.claude-plugin/marketplace.json
 version() { sed -nE 's/.*"version": *"([^"]+)".*/\1/p' "$PLUGIN_JSON" | head -1; }
+first_name() { sed -nE 's/.*"name": *"([^"]+)".*/\1/p' "$1" | head -1; }
+
+if [ ! -e .git ]; then
+  ID="$(first_name "$PLUGIN_JSON")@$(first_name "$MARKET_JSON")"
+  echo "plugin: $ID, marketplace install (version $(version))"
+  [ "$MODE" = check ] && { echo "would: fetch the latest version from GitHub"; exit 0; }
+  claude plugin marketplace update "${ID#*@}" && claude plugin update "$ID" \
+    || { echo "FAILED: plugin update — nothing else was changed"; exit 1; }
+  echo "ok: updated — restart Claude Code to use the new version"
+  exit 0
+fi
 
 echo "plugin: $ROOT (version $(version))"
 
