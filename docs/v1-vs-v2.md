@@ -1,7 +1,7 @@
 # build-task v1 vs v2
 
-v1 (`/build`) is unchanged and stays the default. v2 (`/build-v2`) is
-experimental, runs side by side, and is built on one rule: **quality is never
+v2 is the default: `/build`, `/build-v2`, and any request to change code run it.
+v1 is unchanged and still available as `/build-v1`. v2 is built on one rule: **quality is never
 traded for cost — only waste is cut.** Full reasoning:
 `skills/build-task-v2/reference.md`.
 

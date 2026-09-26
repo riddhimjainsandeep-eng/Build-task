@@ -1,6 +1,6 @@
 ---
 name: build-task-v2
-description: Experimental v2 of the build-task six-phase procedure — risk-scored, quality-first, with user settings. Use ONLY when the user runs /build-v2 or explicitly asks for build-task v2; otherwise the regular build-task skill applies.
+description: Mandatory six-phase procedure for any change to a codebase (v2 — risk-scored, quality-first, the default). Use whenever the user asks to execute a prompt file, run a task from agent-runs/, fix a bug, add a feature, or otherwise modify code — even if they don't name this skill — and for /build or /build-v2. Never skip a phase and never reorder them.
 ---
 
 # Build Task v2 — six-phase procedure

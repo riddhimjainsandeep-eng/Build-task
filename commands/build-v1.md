@@ -1,9 +1,9 @@
 ---
-description: Execute a prompt file using the faster variant of the six-phase build procedure (experimental)
+description: Execute a prompt file using the original v1 six-phase build procedure
 argument-hint: [task-name]
 ---
 
-Execute the task `$1` using the **build-task-fast** skill (the experimental faster variant; `/build` runs v2).
+Execute the task `$1` using the original **build-task** (v1) skill. `/build` now runs v2.
 
 **First, check this project has been set up.** If there is no `agent-runs/`
 folder and no `.build-task-setup` marker, stop and run the **build-setup** skill
@@ -31,7 +31,7 @@ improvising a folder structure.
    today's date, move the prompt file in as `00-PROMPT.md`, and work there.
    If nothing matches `$1`, list what is in `upcoming/` and `active/` and stop.
 
-3. Read the build-task-fast skill and follow all six phases in order. Do not skip a
+3. Read the build-task skill and follow all six phases in order. Do not skip a
    phase and do not reorder them. The prompt file is the goal; the skill is the
    procedure.
 
@@ -39,8 +39,6 @@ improvising a folder structure.
    `needs a decision`, or when a better alternative should be proposed. A
    `feasible` verdict continues straight through.
 
-5. Phase 3 runs in the background alongside Phase 2, per the skill. Then read
-   its `phases/report-and-close.md`, print the user part of `04-REPORT.md` in
-   chat, and run Phase 5 in full — documents, the rules file and its inventory,
-   then `scripts/close-out.sh` for move, archive, the shared history, push, and
-   deleting `RESUME.md` last.
+5. Print `04-REPORT.md` in chat, then run Phase 5 in full — documents, the rules
+   file and its inventory, move to `done/`, archive, **log the run to the shared
+   history**, push, and delete `RESUME.md` last.

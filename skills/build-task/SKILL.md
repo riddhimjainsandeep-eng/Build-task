@@ -1,6 +1,6 @@
 ---
 name: build-task
-description: Mandatory six-phase procedure for any change to a codebase. Use whenever the user asks to execute a prompt file, run a task from agent-runs/, fix a bug, add a feature, or otherwise modify code — even if they don't name this skill. Never skip a phase and never reorder them.
+description: Original v1 of the six-phase build procedure. Use ONLY when the user runs /build-v1 or explicitly asks for v1; otherwise build-task-v2 applies.
 ---
 
 # Build Task — six-phase procedure

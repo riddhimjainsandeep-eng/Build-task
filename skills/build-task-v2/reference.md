@@ -1,8 +1,8 @@
 # build-task-v2 — what differs from v1, and why
 
 The rationale for the procedure itself is in `../build-task/reference.md`. This
-file covers only what v2 changes. v1 (`build-task`, `/build`) is untouched and
-stays the default.
+file covers only what v2 changes. v1 (`build-task`) is untouched and still runs
+as `/build-v1`; v2 is the default.
 
 ## The rule above every rule
 

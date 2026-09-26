@@ -31,8 +31,8 @@ settings and are never offered.
 
 ## `/build-v2 <task>` — run a task
 
-Execute the task `$1` using the **build-task-v2** skill (the regular `/build`
-still runs the original procedure).
+Execute the task `$1` using the **build-task-v2** skill (`/build` runs the same;
+`/build-v1` runs the original procedure).
 
 **First, check this project has been set up.** No `agent-runs/` folder and no
 `.build-task-setup` marker → stop and run the **build-setup** skill instead. Say

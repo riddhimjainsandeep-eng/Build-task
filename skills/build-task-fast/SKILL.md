@@ -1,6 +1,6 @@
 ---
 name: build-task-fast
-description: Experimental faster variant of the build-task six-phase procedure — same phases and checks, fewer tokens and tool calls. Use ONLY when the user runs /build-fast or explicitly asks for the fast build procedure; otherwise the regular build-task skill applies.
+description: Experimental faster variant of the build-task six-phase procedure — same phases and checks, fewer tokens and tool calls. Use ONLY when the user runs /build-fast or explicitly asks for the fast build procedure; otherwise build-task-v2 applies.
 ---
 
 # Build Task (fast) — six-phase procedure
