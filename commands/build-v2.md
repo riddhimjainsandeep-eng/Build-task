@@ -40,9 +40,11 @@ so plainly rather than improvising a folder structure.
 
 **Open your very first reply with these lines, before anything else:**
 
-- **Browser:** the prompt file's `browser:` declaration — `yes` means a browser
-  tool is used late in Phase 2 and the report ends by suggesting `/compact`; `no`
-  means no browser tool at any point. Not declared → decide and say which.
+- **Browser:** Phase 0 always checks the running app itself in Claude in Chrome
+  (when there is one). The prompt file's `browser:` declaration covers the rest —
+  `yes` means a browser check late in Phase 2 and the report ends by suggesting
+  `/compact`; `no` means no browser after Phase 0. Not declared → decide and say
+  which.
 - **Model:** Phase 1 must run on Opus. If this session is not on Opus, say so and
   suggest `/model opus` before starting.
 - **Session:** if this session already holds other work, recommend starting the

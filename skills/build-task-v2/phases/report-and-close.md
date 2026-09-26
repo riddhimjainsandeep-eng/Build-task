@@ -33,10 +33,13 @@ it explains how something works, draw it — a small Mermaid diagram.
 6. **What contradicted what you believed** — own heading, always
 7. **Anything added beyond the ask** — green/amber/red. **For each amber, ask the
    user: keep or remove?**
-8. What could not be checked from here — exact steps, or "nothing"
-9. **Effort signal** — own heading, always. Did any phase skip a file, not run its
+8. **Other bugs found, not fixed** — `CHECKLIST.md`'s *Not in this task*, each
+   one line with where it shows up, so the user can make it its own task; or
+   "none"
+9. What could not be checked from here — exact steps, or "nothing"
+10. **Effort signal** — own heading, always. Did any phase skip a file, not run its
    check, or stop partway? Report only; never recommend an effort level.
-10. `browser: yes` or `no`. If `yes`, end by telling the user to `/compact`.
+11. `browser: yes` or `no`. If `yes`, end by telling the user to `/compact`.
 
 ### Technical handoff (if on)
 

@@ -54,6 +54,7 @@ the repo root.
 00-PROMPT.md         the prompt file (already there)
 01-FINDINGS.md       Phase 0 — facts, each cited
 RISK.md              Phase 0 — the risk score, read by every later phase
+CHECKLIST.md         Phase 0 — Phase 1's steps, ticked as they are done
 02-CHECK.md          Phase 2  (+ 02-CHECK-output.log, the full output)
 03-REVIEW.md         Phase 3
 04-REPORT.md         Phase 4 — user report, then technical handoff (if on)
@@ -66,10 +67,14 @@ archive depend on them.
 
 ## `browser: yes | no`
 
-Declared under the prompt file's title; if missing, Phase 0 decides. It binds the
-run: **`no`** — no browser tool may be called by any phase or subagent; `yes` —
-browser work goes **last** in its phase, and the report ends by telling the user
-to `/compact`. No browser tool in this environment → always `no`.
+Declared under the prompt file's title; if missing, Phase 0 decides. It binds
+Phases 1–5: **`no`** — no browser tool may be called by them or their subagents;
+`yes` — browser work goes **last** in its phase, and the report ends by telling
+the user to `/compact`. No browser tool in this environment → always `no`.
+
+**Phase 0 is exempt** — it checks the running app itself on every run where the
+project has one (step 4 of its order of work). It is a subagent, so what it sees
+never enters the main session's context.
 
 ## The verification rule — every phase
 
@@ -96,7 +101,8 @@ If the task folder has phase files, do not start over:
    gone. `04-REPORT.md` present but folder still in `<taskFolder>/` → rerun
    Phase 5 from (a); every step is safe to repeat.
 2. `git status`, `git log -1` — uncommitted changes with no commit mean Phase 1
-   was interrupted; read the diff before adding to it.
+   was interrupted; read the diff before adding to it. `CHECKLIST.md`'s ticks
+   show how far Phase 1 got.
 3. Continue from the first incomplete phase.
 
 ## Models
@@ -116,9 +122,10 @@ failure has appeared; never lower it to save.
 ## Phase 0 — Explore and score the risk
 
 **Dispatch a write-capable subagent (`general-purpose`) on `model: opus`.** It
-writes `01-FINDINGS.md` and `RISK.md` and returns only the verdict and the risk
-line. **Its prompt must say those two files are the only ones it may write** — no
-source edits, no map or ledger edits (it records those for Phase 5).
+writes `01-FINDINGS.md`, `RISK.md` and `CHECKLIST.md` and returns only the
+verdict and the risk line. **Its prompt must say those three files are the only
+ones it may write** — no source edits, no map or ledger edits (it records those
+for Phase 5).
 
 ### Order of work
 
@@ -129,6 +136,22 @@ source edits, no map or ledger edits (it records those for Phase 5).
 2. **The code** — code-graph index, LSP or grep: definitions and **every**
    reference to what will change.
 3. **Library docs**, when a fast-moving dependency's behaviour matters.
+4. **See it running** — whenever the project has an app that opens in a browser.
+   **Never take the prompt file's word for how the app behaves; check it.**
+   - Start the dev command if the app is not already running; open it in a
+     **new Claude in Chrome tab** (never the headless devtools browser).
+   - **Test every claim the prompt makes about behaviour** — click, type, watch.
+     Mark each **confirmed**, **not reproduced**, or **behaves differently** (say
+     what you saw) under *What contradicted the prompt file*.
+   - **Hunt for bugs the prompt did not mention** on the screens the task touches
+     and every screen that shares code with them (the callers from step 2). Read
+     the console on each.
+   - **Safety:** on a local dev server, anything goes. On a live site: navigate
+     and read only — never save, delete, submit, pay, send, or log in with the
+     user's credentials.
+   - Close the tab, and stop the dev server if you started it.
+   - Chrome tools unreachable → say so under *Seen in the browser*; continue on
+     the code alone.
 
 Read as widely as the task needs — the rule above every rule applies.
 
@@ -156,6 +179,9 @@ Stop when both hold:
 - **Ledger updates** — `[?]` claims checked, their new mark and date; map
   disagreements.
 - **What the shared history warned about**, or "nothing relevant found".
+- **Seen in the browser** — each observation cites the page URL and what was
+  clicked, as code claims cite `file:line`. Bugs found outside this task are
+  listed here, never fixed. No app, or no Chrome tools → say which.
 - **Every caller** of what will change, when blast radius scores 2 or more.
 - **What I did not read, and why.**
 - `browser: yes | no` · **Verdict:** `feasible` / `blocked` / `needs a decision`
@@ -171,6 +197,16 @@ if the task should be split.
 
 Scored with `phases/risk.md`; computed with
 `bash <this skill's folder>/scripts/risk-score.sh B R K T G D` — never by hand.
+
+### CHECKLIST.md
+
+Phase 1's route, so it stays on the task and in order:
+
+- **Steps**, in order, each a `- [ ]` box naming the file or function and the
+  finding it comes from.
+- **Not in this task** — things noticed but out of scope, including bugs found in
+  the browser. Phase 1 does not touch them; Phase 4 reports them.
+- **Last box:** run the check from `01-FINDINGS.md` (Phase 2 does this).
 
 ### Handoff
 
@@ -193,6 +229,9 @@ transform the task. **Scope level** defaults to `full` — the smallest solution
 that works; lower it **only** to fix at a single shared choke point instead of
 many places. Never change the declared level silently.
 
+- **Work down `CHECKLIST.md` in order; tick each box as it is done.** A step that
+  must be added, dropped or changed → edit the checklist with the reason and
+  declare it in the commit message. Never silently.
 - **Before each edit, re-read the lines it depends on** — line numbers drift.
 - **Confirm every `inferred` finding** you rely on before relying on it.
 - **Safeguards from `RISK.md` are not optional** (see `phases/risk.md`), e.g.
@@ -264,7 +303,7 @@ it fails.
 `opus`). Give it: **`00-PROMPT.md` verbatim** (never a paraphrase), the diff
 `git diff <base>..HEAD`, the commit messages `git log <base>..HEAD`, and the
 **names** of the dimensions that scored 3 — not the reasons. It may read any code
-in the repo. It must never see `01-FINDINGS.md`, `RISK.md`'s evidence, `02-CHECK*`
+in the repo. It must never see `01-FINDINGS.md`, `RISK.md`'s evidence, `CHECKLIST.md`, `02-CHECK*`
 or the implementer's reasoning. It writes `03-REVIEW.md` itself — the only file
 it may write, said in its prompt — headed with the commit reviewed, and returns
 pass/fail plus any amber, red or correctness items.

@@ -10,7 +10,7 @@ traded for cost — only waste is cut.** Full reasoning:
 | Instruction tokens, Phases 0–3 | 6,120 | 4,685 (incl. the risk rubric) |
 | Extra when Phase 4 starts | 0 | 1,535 (loaded only then) |
 | How much care a task gets | Size: "small mode" at Phase 4, by line count | **Risk score** from six evidenced dimensions, at Phase 0 |
-| Phase 0 output | `01-FINDINGS.md` | + `RISK.md`; claims labelled read/inferred; blind spots named |
+| Phase 0 output | `01-FINDINGS.md` | + `RISK.md` + `CHECKLIST.md` (Phase 1 ticks it off); claims labelled read/inferred; blind spots named; checks the running app in Claude in Chrome itself |
 | Phase 0 contradiction | "only write findings" *and* "fix CLAUDE-RULES marks" | Marks recorded in findings, applied by Phase 5 |
 | Phase 2's check | Any check | **Phase 0's pre-committed check first**; callers' tests when blast radius ≥ 2 |
 | Check fails | Unspecified | Back to Phase 1, max two rounds, then stop and tell the user |
