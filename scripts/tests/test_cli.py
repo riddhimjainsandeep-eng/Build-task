@@ -62,3 +62,14 @@ class Cli(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class CliReviewFixes(unittest.TestCase):
+    def test_M2_runs_from_a_subfolder(self):
+        repo = make_repo(FILES)
+        try:
+            r = run_bt(['index', 'toc'], repo / 'src')
+            self.assertIn('push — Web Push', r.stdout)
+            self.assertFalse((repo / 'src' / 'docs').exists())
+        finally:
+            remove(repo)

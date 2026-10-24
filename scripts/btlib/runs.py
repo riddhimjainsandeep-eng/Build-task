@@ -37,8 +37,11 @@ def _head(repo):
 
 
 def new_task(repo, name, words, today):
-    d = task_folder(repo) / f'{today:%Y-%m-%d}_{name}'
-    d.mkdir(parents=True, exist_ok=True)
+    base = task_folder(repo) / f'{today:%Y-%m-%d}_{name}'
+    d, n = base, 2
+    while d.exists():  # never overwrite an earlier run's words or phase files
+        d, n = base.with_name(f'{base.name}-{n}'), n + 1
+    d.mkdir(parents=True)
     (d / '00-PROMPT.md').write_text(PROMPT.format(name=name, words=words.rstrip()), encoding='utf-8')
     started = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     (d / 'RESUME.md').write_text(f'started: {started}\nbase: {_head(repo)}\n', encoding='utf-8')
@@ -54,24 +57,34 @@ def write_resume(task_dir, phase, done, next_, half):
 
 def run_check(task_dir, cmd, cwd=None):
     """Run one check; full output appended to 02-CHECK-output.log; print exit code and the last 40 lines."""
-    shell = isinstance(cmd, str)
-    r = subprocess.run(cmd, shell=shell, cwd=cwd, capture_output=True, text=True, errors='replace')
-    out = (r.stdout or '') + (r.stderr or '')
-    shown = cmd if shell else ' '.join(map(str, cmd))
+    if isinstance(cmd, str):  # card checks are written in bash syntax
+        shown, argv = cmd, [shutil.which('bash') or 'bash', '-c', cmd]
+    else:  # resolve npm -> npm.cmd etc. the way a shell would
+        shown, argv = ' '.join(map(str, cmd)), [shutil.which(cmd[0]) or cmd[0], *cmd[1:]]
+    try:
+        r = subprocess.run(argv, cwd=cwd, capture_output=True, text=True, errors='replace')
+        code, out = r.returncode, (r.stdout or '') + (r.stderr or '')
+    except OSError as e:
+        code, out = 127, f'bt: could not run {argv[0]}: {e}\n'
     with open(Path(task_dir) / '02-CHECK-output.log', 'a', encoding='utf-8') as log:
-        log.write(f'$ {shown}\n{out}exit={r.returncode}\n\n')
-    print(f'$ {shown}\nexit={r.returncode}')
+        log.write(f'$ {shown}\n{out}exit={code}\n\n')
+    print(f'$ {shown}\nexit={code}')
     print('\n'.join(out.splitlines()[-40:]))
-    return r.returncode
+    return code
 
 
 def saved_checks(repo, task_dir, slugs):
     from btlib.index import load_cards
+    cards = {c['slug']: c for c in load_cards(repo)}
+    unknown = [s for s in slugs if s not in cards]
+    if unknown:  # a misspelt card must never mean "no checks, all passed"
+        raise ValueError(f'no card named: {", ".join(unknown)}')
     failed = 0
-    for c in load_cards(repo):
-        if c['slug'] in slugs:
-            for cmd in c['checks']:
-                failed += run_check(task_dir, cmd, cwd=repo) != 0
+    for s in slugs:
+        if not cards[s]['checks']:
+            print(f'no saved checks: {s}')
+        for cmd in cards[s]['checks']:
+            failed += run_check(task_dir, cmd, cwd=repo) != 0
     return failed
 
 
@@ -102,8 +115,8 @@ def backup(task_dir, paths):
     pairs = []
     for src in map(Path, paths):
         files = [f for f in src.rglob('*') if f.is_file()] if src.is_dir() else [src]
-        if not src.exists() or not files or any(f.stat().st_size == 0 for f in files):
-            raise ValueError(f'nothing to back up, or an empty file: {src}')
+        if not src.exists() or not any(f.stat().st_size for f in files):
+            raise ValueError(f'nothing to back up (missing or empty): {src}')
         try:
             rel = src.resolve().relative_to(Path.cwd().resolve())
         except ValueError:
@@ -116,6 +129,6 @@ def backup(task_dir, paths):
             if _sha(f) != _sha(copy):
                 raise ValueError(f'backup copy differs from the original: {f}')
         pairs.append((target, src))
-    for target, src in pairs:
-        print(f'restore: cp -r "{target}" "{src}"')
+    for target, src in pairs:  # a folder: copy its contents back, not the folder into itself
+        print(f'restore: cp -r "{target}/." "{src}"' if src.is_dir() else f'restore: cp "{target}" "{src}"')
     return dest

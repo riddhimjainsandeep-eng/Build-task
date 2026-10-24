@@ -1,4 +1,4 @@
-import json, os, sys, tempfile, unittest
+import contextlib, io, json, os, sys, tempfile, unittest
 from datetime import date
 from pathlib import Path
 from fixtures import make_repo, remove
@@ -83,3 +83,55 @@ class Runs(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ReviewFixes(unittest.TestCase):
+    def setUp(self):
+        self.repo = make_repo({'src/a.ts': 'export function a() {}\n',
+                               'docs/index/cards/a.md': '# A\nfiles: src/a.ts\nchecks: test -n "$HOME" && echo bash-ok\n',
+                               'docs/index/cards/b.md': '# B\nfiles: src/a.ts\n'})
+        os.environ['BUILD_TASK_HOME'] = tempfile.mkdtemp()
+        self.d = new_task(self.repo, 'demo', 'x', date(2026, 10, 24))
+
+    def tearDown(self):
+        remove(self.repo)
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows .cmd shims only')
+    def test_C1_check_runs_cmd_shims(self):
+        shim = Path(tempfile.mkdtemp())
+        (shim / 'hellobt.cmd').write_text('@echo shim-ran\r\n')
+        old = os.environ['PATH']
+        os.environ['PATH'] = str(shim) + os.pathsep + old
+        try:
+            self.assertEqual(run_check(self.d, ['hellobt']), 0)
+            self.assertIn('shim-ran', (self.d / '02-CHECK-output.log').read_text())
+        finally:
+            os.environ['PATH'] = old
+
+    def test_C1_missing_command_logged_as_127(self):
+        self.assertEqual(run_check(self.d, ['no-such-command-bt-xyz']), 127)
+        self.assertIn('exit=127', (self.d / '02-CHECK-output.log').read_text())
+
+    def test_I1_saved_checks_run_in_bash(self):
+        self.assertEqual(saved_checks(self.repo, self.d, ['a']), 0)
+        self.assertIn('bash-ok', (self.d / '02-CHECK-output.log').read_text())
+
+    def test_I2_unknown_card_is_an_error(self):
+        with self.assertRaises(ValueError):
+            saved_checks(self.repo, self.d, ['paymnt'])
+
+    def test_I4_folder_restore_line(self):
+        pkg = self.repo / 'pkg'
+        pkg.mkdir()
+        (pkg / 'a.py').write_text('x = 1\n')
+        (pkg / '__init__.py').write_text('')  # M3: an empty file must not block a folder backup
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            out = backup(self.d, [pkg])
+        self.assertEqual((out / 'pkg' / 'a.py').read_text(), 'x = 1\n')
+        self.assertIn('/." "', buf.getvalue())
+
+    def test_I6_same_task_twice_keeps_both(self):
+        again = new_task(self.repo, 'demo', 'second words', date(2026, 10, 24))
+        self.assertNotEqual(again, self.d)
+        self.assertIn('x', (self.d / '00-PROMPT.md').read_text())

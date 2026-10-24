@@ -1,6 +1,6 @@
 """bt — the mechanical half of build-task. Called through the `bt` wrapper from the project root.
 
-  bt index build | ask "<query>" | toc | stale --since <commit> | record right|wrong | mode
+  bt index build | ask "<query>" | toc | stale --since <commit> | checked <slug ...> | record right|wrong | mode
   bt new-task <name>                         (the user's words on stdin; prints the folder)
   bt resume <task-dir> --phase P --done D --next N --half H
   bt check <task-dir> -- <command ...>       (exit code = the command's)
@@ -42,8 +42,14 @@ def hook_install(repo):
     return 0
 
 
+def project_root():
+    """The git top level, so bt works from any subfolder; the current folder outside git."""
+    r = subprocess.run(['git', 'rev-parse', '--show-toplevel'], capture_output=True, text=True)
+    return Path(r.stdout.strip()) if r.returncode == 0 and r.stdout.strip() else Path.cwd()
+
+
 def main(argv):
-    repo = Path.cwd()
+    repo = project_root()
     if argv[:1] == ['check']:  # bt check <task-dir> -- <command ...>, kept verbatim
         if len(argv) < 4 or argv[2] != '--':
             print('usage: bt check <task-dir> -- <command ...>', file=sys.stderr)
@@ -58,6 +64,7 @@ def main(argv):
     ix.add_parser('toc')
     ix.add_parser('stale').add_argument('--since', required=True)
     ix.add_parser('record').add_argument('result', choices=['right', 'wrong'])
+    ix.add_parser('checked').add_argument('slugs', nargs='+')
     ix.add_parser('mode')
     sub.add_parser('new-task').add_argument('name')
     r = sub.add_parser('resume')
@@ -96,6 +103,9 @@ def main(argv):
             print('\n'.join(index.stale_cards(repo, a.since)))
         elif a.action == 'record':
             print(json.dumps(index.record(repo, a.result == 'right')))
+        elif a.action == 'checked':
+            index.mark_checked(repo, a.slugs)
+            print(f"checked at HEAD: {', '.join(a.slugs)}")
         else:
             print(json.dumps(index.trust_state(repo)))
     elif a.cmd == 'new-task':
@@ -103,7 +113,11 @@ def main(argv):
     elif a.cmd == 'resume':
         runs.write_resume(a.task_dir, a.phase, a.done, a.next, a.half)
     elif a.cmd == 'saved-checks':
-        failed = runs.saved_checks(repo, a.task_dir, a.slugs)
+        try:
+            failed = runs.saved_checks(repo, a.task_dir, a.slugs)
+        except ValueError as e:
+            print(f'bt: {e}', file=sys.stderr)
+            return 2
         print(f'saved checks failed: {failed}')
         return 1 if failed else 0
     elif a.cmd == 'report':

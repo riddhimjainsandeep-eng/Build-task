@@ -39,8 +39,10 @@ Every step is safe to repeat.
 Rewrite only the lines of those cards that this run proved wrong or incomplete — what it
 does, files, tables, connections, symptoms, watch-outs. A gap the run hit (code no card
 covered, a search that missed) → add the missing words or a new card. Knowledge scored 3 →
-the card for this system **must** be updated or created. Then `bt index build` (it refuses
-a card that looks like it holds a secret). Maps are not edited.
+the card for this system **must** be updated or created. Then mark every card `stale`
+listed as checked against today's code — `bt index checked <slug …>` (this clears its
+`CHANGED` flag; never mark a card you did not compare with the code) — and run
+`bt index build` (it refuses a card that looks like it holds a secret). Maps are not edited.
 
 **b) Rules file and ledger.** Apply `01-FINDINGS.md`'s *Ledger updates* to
 `docs/CLAUDE-RULES.md`. In `CLAUDE.md`: correct what this run proved wrong; add only what a

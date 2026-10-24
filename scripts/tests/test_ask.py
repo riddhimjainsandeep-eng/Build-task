@@ -75,3 +75,42 @@ class Ask(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class AskReviewFixes(unittest.TestCase):
+    def setUp(self):
+        files = dict(FILES)
+        files['src/My Comp/login form.ts'] = 'export function loginForm() {}\n'
+        files['docs/index/cards/form.md'] = '# Login form\nalso: form\nfiles: ' + r'src\My Comp\login form.ts' + '\n'
+        files['docs/index/cards/empty.md'] = '# No files card\nalso: nothing\n'
+        self.repo = make_repo(files)
+
+    def tearDown(self):
+        remove(self.repo)
+
+    def test_I3_backslash_paths_normalised(self):
+        from btlib.index import parse_card
+        self.assertEqual(parse_card(self.repo / 'docs/index/cards/form.md')['files'], ['src/My Comp/login form.ts'])
+
+    def test_I3_stale_handles_spaces(self):
+        base = git(self.repo, 'rev-parse', 'HEAD')
+        (self.repo / 'src/My Comp/login form.ts').write_text('export function x() {}\n')
+        self.assertIn('form', stale_cards(self.repo, base))
+
+    def test_I5_checked_clears_changed(self):
+        from btlib.index import mark_checked
+        (self.repo / 'src/login.ts').write_text('export function checkPassword(x) {}\n')
+        git(self.repo, 'commit', '-qam', 'change login')
+        self.assertIn('CHANGED: src/login.ts', ask(self.repo, 'login password'))
+        mark_checked(self.repo, ['login'])
+        self.assertNotIn('CHANGED', ask(self.repo, 'login password'))
+
+    def test_I5_card_without_files_never_changed(self):
+        from btlib.index import card_changes, parse_card
+        (self.repo / 'src/login.ts').write_text('y')
+        git(self.repo, 'commit', '-qam', 'touch')
+        self.assertEqual(card_changes(self.repo, parse_card(self.repo / 'docs/index/cards/empty.md')), ([], []))
+
+    def test_M1_secret_card_does_not_crash_ask(self):
+        (self.repo / 'docs/index/cards/bad.md').write_text('# Bad\nsk-abcdefghijklmnopqrstuvwx\n')
+        self.assertIn('secret', ask(self.repo, 'login'))

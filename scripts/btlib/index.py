@@ -70,17 +70,20 @@ def _split(v, sep=','):
 
 def parse_card(path):
     path = Path(path)
-    c = dict(slug=path.stem, title=path.stem, also='', files=[], tables=[], connects='', symptoms='', checks=[], notes='')
+    c = dict(slug=path.stem, title=path.stem, also='', files=[], tables=[], connects='', symptoms='', checks=[],
+             checked='', notes='')
     notes = []
     for ln in path.read_text(encoding='utf-8', errors='replace').splitlines():
         key, _, val = ln.partition(':')
         key = key.strip().lower()
         if ln.startswith('# ') and c['title'] == path.stem:
             c['title'] = ln[2:].strip()
-        elif key in ('also', 'connects', 'symptoms'):
+        elif key in ('also', 'connects', 'symptoms', 'checked'):
             c[key] = val.strip()
-        elif key in ('files', 'tables'):
-            c[key] = _split(val)
+        elif key == 'files':  # cards written on Windows may use backslashes
+            c['files'] = [f.replace('\\', '/') for f in _split(val)]
+        elif key == 'tables':
+            c['tables'] = _split(val)
         elif key == 'checks':
             c['checks'] = _split(val, ';')
         else:
@@ -254,15 +257,29 @@ def code_hits(ix, query, skip, k=4):
 
 
 def card_changes(repo, card):
-    """(changed, missing): card files changed since the card file was last committed, and files gone."""
+    """(changed, missing): card files changed since the card was last checked (its `checked:` commit,
+    else its last commit), and files that no longer exist."""
     repo = Path(repo)
+    if not card['files']:
+        return [], []
     missing = [f for f in card['files'] if not (repo / f).exists()]
-    since = _run(repo, 'git', 'log', '-1', '--format=%H', '--', (CARD_DIR / f"{card['slug']}.md").as_posix())
+    since = card.get('checked') or (
+        _run(repo, 'git', 'log', '-1', '--format=%H', '--', (CARD_DIR / f"{card['slug']}.md").as_posix()) or b'').decode().strip()
     changed = []
-    if since and since.strip():
-        out = _run(repo, 'git', 'diff', '--name-only', since.decode().strip(), '--', *card['files']) or b''
-        changed = [f for f in out.decode().split('\n') if f and f not in missing]
+    if since:
+        out = _run(repo, 'git', 'diff', '--name-only', '-z', since, '--', *card['files']) or b''
+        changed = [f for f in out.decode('utf-8', 'replace').split('\0') if f and f not in missing]
     return changed, missing
+
+
+def mark_checked(repo, slugs):
+    """Phase 5: these cards were checked against the code at HEAD, so their CHANGED flag clears."""
+    now = head(repo)
+    for slug in slugs:
+        p = Path(repo) / CARD_DIR / f'{slug}.md'
+        lines = [ln for ln in p.read_text(encoding='utf-8').splitlines() if not ln.startswith('checked:')]
+        at = next((i + 1 for i, ln in enumerate(lines) if ln.startswith('files:')), 1)
+        p.write_text('\n'.join(lines[:at] + [f'checked: {now}'] + lines[at:]) + '\n', encoding='utf-8')
 
 
 def trust_state(repo):
@@ -273,7 +290,10 @@ def trust_state(repo):
 
 
 def ask(repo, query):
-    ix = load(repo)
+    try:
+        ix = load(repo)
+    except SecretFound as e:
+        return f'bt: a card looks like it holds a secret — remove it, then run bt index build: {e}'
     ranked = rank(ix, query)
     top = [r for r in ranked[:SHOW] if r[0] > 0]
     out = [f"mode: {trust_state(repo)['mode']} · confident: {'yes' if confident(ranked, query) else 'no'}"]
@@ -305,9 +325,9 @@ def toc(repo):
 
 
 def stale_cards(repo, since):
-    out = (_run(repo, 'git', 'diff', '--name-only', since) or b'').decode()
-    out += (_run(repo, 'git', 'ls-files', '--others', '--exclude-standard') or b'').decode()
-    changed = set(out.split())
+    out = (_run(repo, 'git', 'diff', '--name-only', '-z', since) or b'') + b'\0' + \
+        (_run(repo, 'git', 'ls-files', '--others', '--exclude-standard', '-z') or b'')
+    changed = {f for f in out.decode('utf-8', 'replace').split('\0') if f}  # NUL-separated: names may hold spaces
     return [c['slug'] for c in load_cards(repo) if changed & set(c['files'])]
 
 
