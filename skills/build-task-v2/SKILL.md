@@ -1,6 +1,6 @@
 ---
 name: build-task-v2
-description: Mandatory six-phase procedure for any change to a codebase (v2 — risk-scored, quality-first, the default). Use whenever the user asks to execute a prompt file, run a task from agent-runs/, fix a bug, add a feature, or otherwise modify code — even if they don't name this skill — and for /build or /build-v2. Never skip a phase and never reorder them.
+description: Mandatory six-phase procedure for any change to a codebase (v2 — risk-scored, quality-first, the default). Use whenever the user asks to execute a prompt file, run a task from agent-runs/, fix a bug, add a feature, or otherwise modify code — including a task typed straight into chat with no prompt file — even if they don't name this skill — and for /build or /build-v2. Tasks whose main output is not a code change use build-task-general. Never skip a phase and never reorder them.
 ---
 
 # Build Task v2 — six-phase procedure
@@ -64,6 +64,38 @@ RESUME.md            rewritten continuously, deleted by Phase 5
 
 Files the user never reads are still written: later phases, resumes and the
 archive depend on them.
+
+## No prompt file — the task was typed in chat
+
+When the user describes the task in chat instead of naming a prompt file, write
+one before Phase 0 — every later phase, the review and the archive read
+`00-PROMPT.md`. Create `<taskFolder>/YYYY-MM-DD_<short-kebab-name>/00-PROMPT.md`:
+
+```
+# <title>
+browser: yes | no          (leave out if unclear — Phase 0 decides)
+
+## Your words
+<the user's message copied exactly — typos, slang and all. If the task came
+over several messages, each one, in order>
+
+## How I read it
+- **Goal:** what the user wants to end up with
+- **Now:** what is wrong or missing today
+- **Done looks like:** what the user will see or be able to do
+- **Not in this task:** anything the words rule out
+- **Assumed:** each thing the words do not state that this reading relies on
+- **Could also mean:** each other reasonable reading, and why this one was picked
+```
+
+- **`Your words` is the goal; `How I read it` is an interpretation.** Where they
+  disagree, the user's words win. Phase 0 tests the reading against the words
+  and the code, and lists any gap under *What contradicted the prompt file*. A
+  `Could also mean` that changes what gets built scores Goal clarity 3.
+- Phase 3 gets the whole file and judges against `Your words` — a reading that
+  drifted from them is a fail on question 1.
+- In the first reply, show the folder path and `How I read it`, then carry on. A
+  real question goes through Phase 0's `needs a decision`, not a stop here.
 
 ## `browser: yes | no`
 

@@ -32,6 +32,7 @@ That is the whole design. Everything else follows from it.
 | `/build-task:build --update` | Publishes your edits to this plugin (version bump, commit, push), or pulls the latest on another machine. Never touches a project's own copy of the skill. |
 | `/build-task:build-v2 <task>` | **v2, the default** — same six phases, risk-scored and quality-first. See `skills/build-task-v2/reference.md` for every difference. |
 | `/build-task:build-v2 settings` | Choose what v2 runs produce (zip, handoff, cost section, push, maps, history). Add `project` for this project only. |
+| `/build-task:build-general <task>` | The same six phases for anything that isn't a code change — research, decisions, plans, documents, images. No setup needed. Runs by itself when you give such a task in chat. |
 | `/build-task:build-fast <task>` | Experimental — v1's procedure with waste removed (Phase 2 and 3 together, one-call close-out). |
 
 ## The six phases

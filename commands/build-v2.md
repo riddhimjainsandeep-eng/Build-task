@@ -57,7 +57,9 @@ so plainly rather than improvising a folder structure.
 2. Find the prompt file: `agent-runs/active/*$1*/00-PROMPT.md`, then
    `agent-runs/upcoming/*$1*.md`. From `upcoming/`: create
    `agent-runs/active/YYYY-MM-DD_$1/` and move it in as `00-PROMPT.md`. Nothing
-   matches → list `upcoming/` and `active/` and stop.
+   matches → if the arguments read as a task description (a sentence, not a
+   name), treat `$ARGUMENTS` as a typed task: follow *No prompt file* in the
+   skill. Otherwise list `upcoming/` and `active/` and stop.
 3. Read the build-task-v2 skill and run all six phases in order. The prompt file
    is the goal; the skill is the procedure.
 4. Stop and wait for the user only when Phase 0 returns `blocked` or
