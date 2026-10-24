@@ -22,6 +22,7 @@ SHOW = 3            # cards shown: the best in full, the next two as one-liners
 LEAD = 1.3          # confident only if the best card scores >= LEAD x the second ...
 COVERAGE = 0.5      # ... and holds at least this share of the question's words
 RARE = 0.2          # safety net: a word in <= 20% of functions counts as specific
+TRUST_AFTER = 5     # correct answers in a row before the index is trusted (watch -> trust)
 
 CODE = ('.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.py', '.sql', '.kt', '.java')
 SKIP_DIRS = {'.git', 'node_modules', '__pycache__', '.next', 'dist', 'build', '.venv'}
@@ -308,3 +309,14 @@ def stale_cards(repo, since):
     out += (_run(repo, 'git', 'ls-files', '--others', '--exclude-standard') or b'').decode()
     changed = set(out.split())
     return [c['slug'] for c in load_cards(repo) if changed & set(c['files'])]
+
+
+def record(repo, right):
+    """Watch mode until the index has been right TRUST_AFTER times in a row; one miss resets it."""
+    s = trust_state(repo)
+    s = {'mode': 'watch', 'streak': 0} if not right else {'streak': s['streak'] + 1, 'mode': 'watch'}
+    if s['streak'] >= TRUST_AFTER:
+        s['mode'] = 'trust'
+    (Path(repo) / TRUST_FILE).parent.mkdir(parents=True, exist_ok=True)
+    (Path(repo) / TRUST_FILE).write_text(json.dumps(s), encoding='utf-8')
+    return {'mode': s['mode'], 'streak': s['streak']}
