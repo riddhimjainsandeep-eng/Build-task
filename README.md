@@ -5,6 +5,8 @@ so it works the same way in every project — plus a first-run setup that builds
 project's documentation scaffolding, and a shared history that lets one project
 learn from what happened in another.
 
+**Upgrading from 1.x? Read [UPGRADE-TO-2.md](UPGRADE-TO-2.md).** It has a box to paste into Claude Code.
+
 **New here? Read [SETUP.md](SETUP.md).** It is written to be followed without
 knowing any code.
 
