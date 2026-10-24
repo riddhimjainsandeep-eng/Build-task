@@ -1,11 +1,11 @@
 ---
 name: build-task-general
-description: Six-phase procedure for any task that is NOT a change to a codebase — research, analysis, decisions, advice, planning, writing, or making files, images or data (a style profile, a gym plan, a study schedule, a purchase decision). Use whenever the user gives such a task, in a prompt file or typed straight into chat, even if they don't name this skill, and for /build-general. Not for a quick question answerable in a few lines — answer that directly. A task whose main output is a code change uses build-task-v2. Never skip a phase and never reorder them.
+description: Six-phase procedure for any task that is NOT a change to a codebase — research, analysis, decisions, advice, planning, writing, or making files, images or data (a style profile, a gym plan, a study schedule, a purchase decision). Use whenever the user gives such a task, in a prompt file or typed straight into chat, even if they don't name this skill, and for /build-general. Not for a quick question answerable in a few lines — answer that directly. A task whose main output is a code change uses build-task. Never skip a phase and never reorder them.
 ---
 
 # Build Task — general (any task, not only code)
 
-The same six phases as build-task-v2, for work whose output is an answer, a
+The same six phases as build-task, for work whose output is an answer, a
 decision, a document, an image or a plan instead of a code change. The procedure
 channels the thinking: find out before deciding, fix the check before doing,
 prove it from outside, let a fresh reader judge it against the user's own words.
@@ -30,7 +30,7 @@ no jargon, reasons not only conclusions.
 
 | Main output of the task | Procedure |
 |---|---|
-| A change to a codebase | build-task-v2 |
+| A change to a codebase | build-task |
 | Anything else — scripts written as tools along the way included | this one |
 | A quick question, a few lines of answer | neither — answer directly |
 

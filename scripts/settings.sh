@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# settings.sh — the user's build-task-v2 settings.
+# settings.sh — the user's build-task settings.
 #
 # Settings change what the user gets and where it goes, never how carefully the
 # work is done. Global file ~/.claude/build-task/settings.json, overridden per

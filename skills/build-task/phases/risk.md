@@ -8,7 +8,7 @@ Size of the diff is never a factor: one line can break everything.
 |---|---|---|---|
 | **B — Blast radius**: what breaks if wrong | One place: a single screen, component or function | Several places in one feature (≈2–10 uses) | Many features, every user or request, or saved data |
 | **R — Reversibility**: does `git revert` undo it all? | Yes, completely | Code reverts but something lingers — a cache, stored settings, something users saw | No — data written or deleted, an outside service called, a live file run |
-| **K — Knowledge**: how well is this area known? | Map exists, needed claims `[v]`, code follows a known pattern | Map partial, or claims were `[?]` and checked only now | No map, map proved wrong, or a pattern or library new to the project |
+| **K — Knowledge**: how well is this area known? | A card covers it and held up against the code, claims `[v]`, code follows a known pattern | Card partial, `CHANGED` files, or claims were `[?]` and checked only now | No card, card proved wrong, or a pattern or library new to the project |
 | **T — Traceability**: are all connections found? | Every use found through types, imports or the language server | Found by text search only; could hide a miss | Hidden: string-built names, config wiring, other languages, generated code |
 | **G — Goal clarity** | The prompt states exactly what done looks like | Needs some interpretation | Vague or has several reasonable readings |
 | **D — Detectability**: if wrong, would anything notice? | Tests cover it, the build fails, or a screenshot shows it plainly | Only a manual look, or partial tests | Would fail silently — a wrong number, date or background job; no tests |
@@ -24,7 +24,7 @@ Level   = Low ≤ 6 · Mid 7–20 · High > 20
 ```
 
 Risks multiply, so several mid scores compound; one high score alone does not
-force High. Compute with `scripts/risk-score.sh B R K T G D` — never by hand.
+force High. Compute with `bt risk B R K T G D` — never by hand.
 
 The bands are a starting calibration. Phase 5 logs every score with its outcome
 so the bands can be tuned from real runs, not opinion.
@@ -39,7 +39,7 @@ The **level** sets Phase 3's model: Low/Mid `sonnet`, High `opus`.
 |---|---|---|
 | B | Findings list every caller; Phase 2 runs the callers' tests | Also: Phase 3 told blast radius is high; security review |
 | R | Phase 1 states the undo command in the report | Back up before editing; security review |
-| K | Phase 1 confirms each `inferred` claim before use | Phase 5 must update or create the map for this system |
+| K | Phase 1 confirms each `inferred` claim before use | Phase 5 must update or create the card for this system |
 | T | Phase 1 re-runs the reference search after editing | Also: search strings and config for the names, not only code references |
 | G | Phase 1 writes its reading of the goal as the first line of the commit | `needs a decision` — ask the user before building |
 | D | Phase 1 adds a test for the changed logic | Test written **first**: fails before the fix, passes after |

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# close-out.sh — Phase 5 steps (c) to (g) of build-task-v2 in one call.
+# close-out.sh — Phase 5 steps (c) to (g) of build-task in one call.
 #
 # Every step is safe to repeat: a rerun skips what is already done. Prints one
 # "ok / skip / held / FAILED" line per step; a FAILED step is left for the agent

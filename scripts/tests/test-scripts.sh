@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# test-v2.sh — self-check for build-task-v2's scripts: risk-score, settings,
+# test-scripts.sh — self-check for build-task's shared scripts: risk-score, settings,
 # run-cost and close-out.
 #
 # Everything runs in throwaway folders with a local bare remote and a fake
