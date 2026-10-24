@@ -10,9 +10,10 @@ This runs **once per project**, before any task work. It leaves
 already exists, do not run again unless the user explicitly asks — instead say
 when it last ran and offer to re-run.
 
-The user is not a coder. Everything you write here is read by him, not just by a
-future session, and every question you ask him has to be answerable without
-opening a code file.
+Write for the person this project serves — Step 5 asks who that is and records it in
+`user.md`. Until you know, assume they may not read code: everything you write is read by
+them, not just by a future session, and every question you ask has to be answerable
+without opening a code file.
 
 ## Step 1 — Work out which branch you are on
 
@@ -45,11 +46,13 @@ docs/
     04-DEAD-CODE.md   what exists but is not used any more
     flowcharts/
       README.md       the chart rules, and the numbered index
+  index/
+    cards/            one card per behaviour/system — the project index (committed)
   CLAUDE-background.md   history and provenance — why things are the way they are
   CLAUDE-RULES.md        the numbered claim inventory and verification ledger
 
 CLAUDE.md               the project's rules (created here if absent)
-user.md                 who the user is, and how he wants to be spoken to
+user.md                 who the work is for, and how they want reports written
 build-task.config.json  this project's settings for the procedure
 .build-task-setup       the marker: date, branch taken, what was verified
 ```
@@ -62,8 +65,9 @@ no backend yet." A stub that says what it is beats an absent file, because the
 next session knows where the answer belongs. Never write a map that describes
 code which does not exist.
 
-Add `agent-runs/done/**/*.zip` to `.gitignore` (archives stay untracked), and
-`.build-task-setup` stays tracked.
+Add `agent-runs/done/**/*.zip`, `docs/index/index.json` and `docs/index/trust.json` to
+`.gitignore` (archives and the machine-built index stay untracked); `.build-task-setup`
+and `docs/index/cards/` stay tracked.
 
 ## Step 3 — Read what is already there
 
@@ -122,25 +126,55 @@ forbids relying on a `[?]` claim without verifying it first, so an honest `[?]`
 today is what makes every later task safe. A `[v]` you did not really check is
 worse than useless.
 
+## Step 4b — Index
+
+The index lets every later run find code without reading maps or whole files. Its cards are
+committed, so whoever sets a project up pays for them once and everyone else reuses them.
+
+1. Write one card per behaviour/system in `docs/index/cards/<slug>.md` — from the maps you
+   just wrote or found (each system → one card; its connections → `connects:`), or from
+   the code on a project without maps. Format:
+   ```
+   # <Title — what it is>
+   also: the words people use for it, including non-technical ones
+   files: path, path            (exact repo paths)
+   tables: name, name
+   connects: other systems it reads from or writes to
+   symptoms: what a user sees when it breaks (fill over time)
+   checks: saved check commands; separated by semicolons (fill over time)
+   <plain notes; "Watch out:" lines; function names, never line numbers>
+   ```
+   Keep each card to ~150–250 tokens. Never put a secret value in a card.
+2. Run `bt index build` (`bt` is `bash "<plugin>/scripts/bt"`). Exit 2 means a card looks
+   like it holds a secret — remove it and rebuild.
+3. Run `bt index toc` and `bt index ask` with two or three plain questions about the
+   project; fix any card whose answer is wrong.
+4. Run `bt hook install` (keeps the index warm after commits; nothing breaks without it).
+5. Commit the cards and `.gitignore` together.
+
 ## Step 5 — Ask your questions, in writing
 
 Whatever you could not determine, ask. Not in chat as a wall of text — **write a
-file** (`SETUP-QUESTIONS.md` in the repo root, or a PDF if he prefers) so he can
-answer at his convenience.
+file** (`SETUP-QUESTIONS.md` in the repo root, or a PDF if they prefer) so they can
+answer at their convenience.
 
-Rules for that file, because he is not a coder:
+**Always ask, first:** who is this work for? Can they read code? How should reports be
+written for them (length, tone, language, how much detail)? Write the answers into
+`user.md` from `templates/user.md`. Never copy another person's profile into a project.
+
+Rules for that file, written for someone who may not code:
 
 - One question per numbered item, in plain English, no file paths or jargon.
-- Say **why it matters** in one line — what changes depending on his answer.
-- **Give your recommendation** where you have one, so he can reply "yes" instead
+- Say **why it matters** in one line — what changes depending on the answer.
+- **Give your recommendation** where you have one, so they can reply "yes" instead
   of composing an answer.
-- Never ask him something you could determine yourself by reading the code. Check
+- Never ask something you could determine yourself by reading the code. Check
   first; ask only about intent, preference, and things outside the repo.
 - **If you need a key, secret or connection string, name it exactly and say what
-  it is for.** He will paste it in. Never guess one, never proceed as if you had
+  it is for.** They will paste it in. Never guess one, never proceed as if you had
   it, and never write its value into any file that gets pasted into a chat.
 
-Then **stop and wait.** Setup is not finished until he has answered — folding his
+Then **stop and wait.** Setup is not finished until they have answered — folding their
 answers back into `CLAUDE.md` and the maps is the last part of this step, not a
 follow-up task.
 
@@ -151,27 +185,27 @@ projects can learn from each other. Check whether `BUILD_TASK_SUPABASE_URL` and
 `BUILD_TASK_SUPABASE_KEY` are set (environment, or `~/.claude/build-task/env`).
 
 - **Both present** — do a single read to confirm they work, and say so.
-- **Missing** — say so plainly in the report, point him at the plugin's
+- **Missing** — say so plainly in the report, point them at the plugin's
   `SETUP.md`, and continue. It is not a blocker: the procedure works without it
   and just doesn't remember across projects.
 
 ## Step 7 — Write the marker and report
 
 `.build-task-setup` records: the date, which branch was taken, how many claims
-were marked `[v]`/`[x]`/`[?]`, roughly how much of the project was mapped, and
-whether the shared history is connected.
+were marked `[v]`/`[x]`/`[?]`, roughly how much of the project was mapped, how many
+cards the index has, and whether the shared history is connected.
 
 Then report to the user in plain English:
 
 1. Which branch this was, and why
 2. What was created — the folder list, in words
 3. **What was found to be untrue** — its own heading, always present. On an old
-   project this is the most valuable output of the whole setup: the things his
-   own documents claimed that the code does not do. Write "nothing" if nothing
+   project this is the most valuable output of the whole setup: the things the
+   project's own documents claimed that the code does not do. Write "nothing" if nothing
    was.
 4. What was left unverified, and roughly how much of the project that is
-5. What you need from him — the questions file, and any keys
+5. What you need from them — the questions file, and any keys
 6. Whether the shared history is connected
 
-Commit everything with a clear message. **Do not push** unless he asks — setup on
-an old project can touch a lot of files, and he should see it first.
+Commit everything with a clear message. **Do not push** unless they ask — setup on
+an old project can touch a lot of files, and they should see it first.
