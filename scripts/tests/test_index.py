@@ -45,7 +45,7 @@ class IndexBuild(unittest.TestCase):
         try:
             ix = build(spaced)
             self.assertEqual(ix['cards'][0]['slug'], 'timer')
-            self.assertIsNotNone(ix['cards'][0]['fingerprints']['src/timer.ts'])
+            self.assertIn('src/timer.ts', ix['files'])
         finally:
             remove(spaced)
 
