@@ -6,7 +6,7 @@
 # shared-history server on localhost — never a real project, GitHub or Supabase.
 # Prints PASS/FAIL per check; exits 1 on any failure. Needs git, jq, curl, python.
 set -uo pipefail
-HERE=$(cd "$(dirname "$0")" && pwd)
+HERE=$(cd "$(dirname "$0")/.." && pwd)
 PY=$(command -v python3 || command -v python)
 T=$(mktemp -d)
 fails=0

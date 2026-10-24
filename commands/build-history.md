@@ -6,7 +6,7 @@ argument-hint: [search term, project name, or "summary"]
 Show the user what the shared build history holds. This is the notebook every
 project writes one line to at the end of each run.
 
-Use the helper at `${CLAUDE_PLUGIN_ROOT}/skills/build-task/scripts/history.sh`:
+Use the helper at `${CLAUDE_PLUGIN_ROOT}/scripts/history.sh`:
 
 - no argument → `history.sh` (the 20 most recent runs, all projects)
 - `summary` → `history.sh --summary` (counts per project, verdicts, total cost)

@@ -12,7 +12,7 @@ settings and are never offered.
 
 1. Scope: `$2` = `project` → this project only; otherwise global (every project).
 2. Show the current values:
-   `bash "${CLAUDE_PLUGIN_ROOT}/skills/build-task-v2/scripts/settings.sh"`
+   `bash "${CLAUDE_PLUGIN_ROOT}/scripts/settings.sh"`
    (if the variable is empty, the plugin is at `~/.claude/skills/build-task`).
 3. Ask with **one** AskUserQuestion call, current values marked "(current)":
    - **"What should each run produce?"** — `multiSelect: true`: Zip archive ·

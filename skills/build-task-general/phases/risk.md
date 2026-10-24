@@ -1,6 +1,6 @@
 # Risk rubric (general) — read by Phase 0
 
-Same six letters and arithmetic as v2, so `<v2>/risk-score.sh`
+Same six letters and arithmetic as v2, so `<scripts>/risk-score.sh`
 computes it. Each scores **1, 2 or 3** by *what happens if the result is wrong*,
 citing evidence from `01-FINDINGS.md`. **No evidence → 3.**
 

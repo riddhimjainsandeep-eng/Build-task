@@ -20,7 +20,7 @@ save money.
 
 Phases 4 and 5 are in `phases/report-and-close.md` beside this file — **read it
 before Phase 4**, not earlier. The risk rubric is `phases/risk.md` — Phase 0
-reads it. Scripts are shared with v2: `<v2>` below means `<plugin>/skills/build-task-v2/scripts`, where `<plugin>` is `${CLAUDE_PLUGIN_ROOT}` (empty → `~/.claude/skills/build-task`).
+reads it. Scripts are shared with build-task: `<scripts>` below means `<plugin>/scripts`, where `<plugin>` is `${CLAUDE_PLUGIN_ROOT}` (empty → `~/.claude/skills/build-task`).
 
 **`user.md` at the project root, if there is one, says who everything
 user-facing is written for — read it once and follow it.** None → plain English,
@@ -40,7 +40,7 @@ None needed. No `agent-runs/` folder → create `agent-runs/upcoming/`,
 `agent-runs/active/` and `agent-runs/done/`, and an `agent-runs/README.md` holding
 only `# Run log`. `build-task.config.json` is optional (same keys and defaults as
 v2; `docsRoot`, `rulesFile`, `buildCommand`, `testCommand` do not apply).
-Settings: `bash <v2>/settings.sh` — here `maps` means the
+Settings: `bash <scripts>/settings.sh` — here `maps` means the
 project's living notes (below) and `zip` does not apply: the folder in `done/` is
 the record.
 
@@ -136,7 +136,7 @@ risk line.
 
 ### Order of work
 
-0. **Shared history** — `bash <plugin>/skills/build-task/scripts/history.sh --search <term>`.
+0. **Shared history** — `bash <plugin>/scripts/history.sh --search <term>`.
 1. **The project** — its living notes, earlier runs' `04-REPORT.md` in
    `agent-runs/done/` that bear on this task, and every file the task touches:
    documents, data, scripts, **photos and videos — look at them**, don't go by
@@ -182,7 +182,7 @@ evidence scores 3, so keep reading until it exists or the gap is named.
 ### RISK.md
 
 Scored with `phases/risk.md`, computed with
-`bash <v2>/risk-score.sh B R K T G D` — never by hand.
+`bash <scripts>/risk-score.sh B R K T G D` — never by hand.
 
 ### CHECKLIST.md
 

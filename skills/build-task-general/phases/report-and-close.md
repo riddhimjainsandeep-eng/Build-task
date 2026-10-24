@@ -5,7 +5,7 @@ rounds stopped the run: then Phase 4 reports the failure plainly, Phase 5 does
 only (c) and (d), and the folder stays in `active/`. The user decides: fix,
 restore from `backups/`, or accept.
 
-Read the settings first: `bash <v2>/settings.sh` (`<v2>` as defined in SKILL.md).
+Read the settings first: `bash <scripts>/settings.sh` (`<scripts>` as defined in SKILL.md).
 
 ## Phase 4 — Report
 
@@ -51,7 +51,7 @@ delete. Back up first. Setting `maps: propose` → write the changes at the end 
 **c) Shared history** (if `history` is on), from the project root:
 
 ```bash
-bash <v2>/log-run.sh --task <task> --verdict feasible \
+bash <scripts>/log-run.sh --task <task> --verdict feasible \
   --phases 0,1,2,3,4,5 --browser no --effort-signal none \
   [--contradictions "..."] [--lesson "..."] [--landmine "..."]
 ```
@@ -63,7 +63,7 @@ another project. Never a secret or anything private about the user.
 
 ```bash
 jq -nc --arg date "$(date +%F)" --arg repo "$(basename "$PWD")" --arg task <task> \
-  --arg kind general --argjson risk "$(bash <v2>/risk-score.sh --json B R K T G D)" \
+  --arg kind general --argjson risk "$(bash <scripts>/risk-score.sh --json B R K T G D)" \
   --arg outcome "<pass|fail>" '{date:$date,repo:$repo,task:$task,kind:$kind,risk:$risk,outcome:$outcome}' \
   >> ~/.claude/build-task/risk-log.jsonl
 ```
@@ -74,5 +74,5 @@ check and review both passed.
 **f)** Delete `RESUME.md` last.
 
 **g) Cost** (if `costSection` is on) —
-`bash <v2>/run-cost.sh --since <run start>`, appended to
+`bash <scripts>/run-cost.sh --since <run start>`, appended to
 `04-REPORT.md`.
