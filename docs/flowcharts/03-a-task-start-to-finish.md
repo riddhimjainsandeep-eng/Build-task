@@ -2,7 +2,7 @@
 
 ```mermaid
 flowchart TD
-    A["You run build<br/>with a task name"] --> P0["Phase 0 — Explore<br/>read the code and write down<br/>what is believed, before changing anything"]
+    A["You run build<br/>with a task name"] --> P0["Phase 0 — Explore<br/>find the code through the index,<br/>write down what is believed,<br/>before changing anything"]
 
     P0 --> V{"Can this be done<br/>as asked?"}
     V -->|"Blocked, or needs your decision"| STOP["Stop and ask you.<br/>Nothing has been changed."]
@@ -11,7 +11,7 @@ flowchart TD
     P1 --> P2["Phase 2 — Prove it<br/>run something real,<br/>record exactly what came back"]
     P2 --> P3["Phase 3 — Independent check<br/>a fresh reader sees only the goal<br/>and the result, never the reasoning"]
     P3 --> P4["Phase 4 — Report to you<br/>plain English, with the evidence"]
-    P4 --> P5["Phase 5 — Close out<br/>update the maps, file it away,<br/>add the line to the notebook"]
+    P4 --> P5["Phase 5 — Close out<br/>update the touched index cards,<br/>file it away, add the line<br/>to the notebook"]
     P5 --> LIVE["Publish. Now it is live."]
 ```
 
@@ -40,7 +40,7 @@ back into their own work and cannot see the gap. Someone who only sees the goal
 and the result can. This is the check that catches working code that solves the
 wrong problem, which every other check would pass.
 
-**Phase 5 is separate from Phase 4 on purpose.** The tidying-up — maps, filing,
+**Phase 5 is separate from Phase 4 on purpose.** The tidying-up — cards, filing,
 the notebook line, publishing — used to be the tail end of the report. When a
 session ended early, a run that had written its report *looked* finished while
 none of that had happened. As its own phase, unfinished work is visible: the task
