@@ -108,6 +108,27 @@ they name is `HEAD`; Phase 5 is done only when the folder is in `<doneFolder>/`.
 incomplete phase. Folders started by older versions (with `05-HANDOFF.md`, without
 `plan-changes.jsonl`) resume the same way.
 
+## Use other skills
+
+Skills installed on this machine carry expertise this procedure does not. Look at the
+available-skills list at the start of a run and **load the ones that fit the task** —
+never require one that is not installed (other people run this plugin with different
+skills). Name each skill you load in the findings or the report.
+
+| When | Look for a skill about |
+|---|---|
+| A project names skills in `build-task.config.json` (`"skills": ["…"]`) or `CLAUDE.md` | those — they come first |
+| Phase 1 fixes a bug | systematic debugging (root cause before any fix) |
+| A safeguard asks for a test first (D = 3) | test-driven development |
+| The change is a screen, layout or animation | the project's frontend / design skill |
+| The change touches a database, migration or query | that database's best practices |
+| Phase 3 at blast radius or reversibility 3 | security review |
+| Browser work | the Claude in Chrome skill |
+
+A skill guides *how* you work. It never replaces a phase, and never overrides this
+procedure's checks or the user's instructions. A subagent you dispatch (Phase 0, Phase 3,
+a browser helper) gets the names of skills that fit its job, in its prompt.
+
 ## Models
 
 Phase 0: **opus**, dispatched. Phase 1, 2, 4, 5: the session (run it on Opus; say so if
