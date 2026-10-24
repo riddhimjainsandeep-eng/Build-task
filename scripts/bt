@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# bt — build-task's single command. Run from the project root: bash <plugin>/scripts/bt <command> ...
+#
+# The tested bash scripts are passed straight through; everything else is bt.py.
+# Picks a Python 3 that actually runs: on Windows "python3" can be the Microsoft
+# Store shortcut, which exists on PATH but runs nothing.
+
+HERE=$(cd "$(dirname "$0")" && pwd)
+
+case "${1:-}" in
+  close)    shift; exec bash "$HERE/close-out.sh" "$@" ;;
+  risk)     shift; exec bash "$HERE/risk-score.sh" "$@" ;;
+  cost)     shift; exec bash "$HERE/run-cost.sh" "$@" ;;
+  settings) shift; exec bash "$HERE/settings.sh" "$@" ;;
+  history)  shift; exec bash "$HERE/history.sh" "$@" ;;
+esac
+
+for py in python3 python "py -3"; do
+  if $py -c "import sys; sys.exit(0 if sys.version_info[0] == 3 else 1)" >/dev/null 2>&1; then
+    exec $py "$HERE/bt.py" "$@"
+  fi
+done
+echo "bt: Python 3 not found (tried python3, python, py -3)" >&2
+exit 127
